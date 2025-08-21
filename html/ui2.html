@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+	<head>              
+		<title> Formatting Examples </title>
+	</head>
+
+<body bgcolor='white'>
+
+<p id='myParagraph' align='center' style='color:green'>This is the first paragraph. It is a simple block of text designed to test how your HTML page handles basic paragraph elements. It's a great way to check the default font, line spacing, and text alignment. You can also use this paragraph to test how your CSS styles affect the p tag, ensuring that your custom typography and layout rules are correctly applied.</p>
+
+<p id='myParagraph2' align='right' style='color:red'>This is the first paragraph. It is a simple block of text designed to test how your HTML page handles basic paragraph elements. It's a great way to check the default font, line spacing, and text alignment. You can also use this paragraph to test how your CSS styles affect the p tag, ensuring that your custom typography and layout rules are correctly applied.</p>
+
+<p id='myParagraph2' align='left' style='color:yellow'>This is the first paragraph. It is a simple block of text designed to test how your HTML page handles basic paragraph elements. It's a great way to check the default font, line spacing, and text alignment. You can also use this paragraph to test how your CSS styles affect the p tag, ensuring that your custom typography and layout rules are correctly applied.</p>
+
+<p id='myParagraph2' align='left' style='color:yellow'>This is the first paragraph. It is a simple block of text designed to test how your HTML page handles basic paragraph elements. It's a great way to check the default font, line spacing, and text alignment. You can also use this paragraph to test how your CSS styles affect the p tag, ensuring that your custom typography and layout rules are correctly applied.</p>
+
+<div id="header"
+ class="main-header highlight"
+ style="color: blue; padding: 20px;"
+ title="Site navigation header and this is the title I provided">
+ Welcome to our website
+</div>
+
+<div style="border:2px solid red; padding:10px;
+margin:15px;">Content</div>
+
+<div width=500 height=500>
+Width and Hieght Test
+</div>
+
+
+
+<pre>
+package com.vtechstorms.vems.controller;
+
+import com.vtechstorms.vems.common.dtos.shared.APIResponse;
+import com.vtechstorms.vems.common.dtos.shared.ErrorDto;
+import com.vtechstorms.vems.common.dtos.transport.DriverDto;
+import com.vtechstorms.vems.common.exceptions.shared.FieldValidationException;
+import com.vtechstorms.vems.common.utils.shared.DtoEntityMapper;
+import com.vtechstorms.vems.common.utils.shared.ValidationUtil;
+import com.vtechstorms.vems.entities.Driver;
+import com.vtechstorms.vems.service.BatchUploadService;
+import com.vtechstorms.vems.service.DriverService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.Job;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * DriverController handles all driver-related API operations.
+ *
+ * Endpoints:
+ * 1) registerDriver:
+ *    - POST /api/driver/registerDriver
+ *    - Registers a new driver with the provided details.
+ *
+ * 2) getAllDrivers:
+ *    - GET /api/driver/getAllDrivers
+ *    - Retrieves a list of all registered drivers.
+ *
+ * 3) getDriverByDriverId:
+ *    - GET /api/driver/getDriverByDriverId/{driverId}
+ *    - Retrieves the driver details by driver ID.
+ *
+ * 4) updateDriver:
+ *    - PUT /api/driver/updateDriver
+ *    - Updates an existing driver's information.
+ *
+ * 5) deleteDriverByDriverId:
+ *    - DELETE /api/driver/deleteDriverByDriverId/{driverId}
+ *    - Deletes the driver associated with the specified driver ID.
+ *
+ * 6) uploadDriver:
+ *    - POST /api/driver/uploadDriver
+ *    - Uploads an Excel file and triggers batch processing for importing driver records.
+ *    - Parameters:
+ *      - file: Multipart Excel file containing driver data.
+ *      - mode: Processing mode (e.g., INSERT, UPDATE).
+ */
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/api/driver")
+public class DriverController {
+
+    private final DriverService driverService;
+    private final BatchUploadService batchUploadService;
+    private final Job importDriverJob;
+    private final DtoEntityMapper mapper;
+
+    @PostMapping("/registerDriver")
+    public ResponseEntity<APIResponse<DriverDto>> registerDriver(@RequestBody @Valid DriverDto driverDto) {
+        Driver driver = mapper.convertFromDtoToEntity(driverDto, Driver.class);
+        DriverDto registeredDriverDto = mapper.convertFromEntityToDto(
+                driverService.registerDriver(driver),
+                DriverDto.class
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                APIResponse.<DriverDto>builder()
+                        .status("Success")
+                        .response(registeredDriverDto)
+                        .build()
+        );
+    }
+
+    @GetMapping("/getAllDrivers")
+    public ResponseEntity<APIResponse<List<DriverDto>>> getAllDrivers() {
+        List<DriverDto> driverDtos = driverService.getAllDrivers()
+                .stream()
+                .map(driver -> mapper.convertFromEntityToDto(driver, DriverDto.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                APIResponse.<List<DriverDto>>builder()
+                        .status("Success")
+                        .response(driverDtos)
+                        .build()
+        );
+    }
+
+    @GetMapping("/getDriverByDriverId/{driverId}")
+    public ResponseEntity<APIResponse<DriverDto>> getDriverByDriverId(@PathVariable String driverId) {
+        Driver driver = driverService.getDriverByDriverId(driverId);
+        DriverDto driverDto = mapper.convertFromEntityToDto(driver, DriverDto.class);
+
+        return ResponseEntity.ok(
+                APIResponse.<DriverDto>builder()
+                        .status("Success")
+                        .response(driverDto)
+                        .build()
+        );
+    }
+
+    @PutMapping("/updateDriver")
+    public ResponseEntity<APIResponse<DriverDto>> updateDriver(@RequestBody @Valid DriverDto driverDto) {
+        List<ErrorDto> validationErrors = ValidationUtil.validateRequiredFields(driverDto);
+        if (!validationErrors.isEmpty()) {
+            throw new FieldValidationException(validationErrors);
+        }
+
+        Driver driver = mapper.convertFromDtoToEntity(driverDto, Driver.class);
+        Driver updatedDriver = driverService.updateDriver(driver);
+        DriverDto updatedDriverDto = mapper.convertFromEntityToDto(updatedDriver, DriverDto.class);
+
+        return ResponseEntity.ok(
+                APIResponse.<DriverDto>builder()
+                        .status("Success")
+                        .response(updatedDriverDto)
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/deleteDriverByDriverId/{driverId}")
+    public ResponseEntity<HttpStatus> deleteDriverByDriverId(@PathVariable String driverId) {
+        driverService.deleteDriverByDriverId(driverId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/uploadDriver")
+    public ResponseEntity<APIResponse<String>> uploadDriverFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("mode") String mode) {
+        return batchUploadService.uploadExcelAndTriggerBatch(file, "Driver", importDriverJob, mode);
+    }
+}
+
+</pre>
+
+</body>
+
+</html>

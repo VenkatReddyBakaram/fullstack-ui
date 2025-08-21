@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Conditional Comments Demo</title>
+<!-- For any IE -->
+<!--[if IE]>
+<style>body { background: lightgray; }</style>
+<![endif]-->
+<!-- For IE 8 only -->
+<!--[if IE 8]>
+<style>h1 { color: red; }</style>
+<![endif]-->
+<!-- For IE less than 9 -->
+<!--[if lt IE 9]>
+<script src="html5shiv.js"></script>
+<![endif]-->
+<!-- For non-IE browsers -->
+<!--[if !IE]><!-->
+<style>p { color: green; }</style>
+<!--<![endif]-->
+</head>
+<body>
+<h1>Hello, One Byte Labs!</h1>
+<!-- Visible only in IE -->
+<!--[if IE]>
+<p>Only for Internet Explorer users.</p>
+<![endif]-->
+<!-- Visible in non-IE browsers -->
+<!--[if !IE]><!-->
+<p>Welcome, modern browser user!</p>
+<!--<![endif]-->
+</body>
+</html>
+
+

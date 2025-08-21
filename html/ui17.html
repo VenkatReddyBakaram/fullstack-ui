@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Registration Form</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #e6f7e6;
+        margin: 0;
+        padding: 0;
+    }
+    h2 {
+        text-align: center;
+        color: #006600;
+        margin-top: 20px;
+    }
+    form {
+        background: #ffffff;
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid #00b300;
+    }
+    label {
+        font-weight: bold;
+        color: #004d00;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 6px 0 15px 0;
+        border: 1px solid #00b300;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    input[type="radio"], input[type="checkbox"] {
+        width: auto;
+        margin-right: 8px;
+    }
+    textarea {
+        resize: none;
+    }
+    .form-section {
+        margin-bottom: 15px;
+    }
+    input[type="submit"], input[type="reset"] {
+        width: 48%;
+        background: #00b33c;
+        color: white;
+        border: none;
+        padding: 10px;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    input[type="reset"] {
+        background: #009933;
+    }
+    input[type="submit"]:hover {
+        background: #00802b;
+    }
+    input[type="reset"]:hover {
+        background: #006622;
+    }
+</style>
+</head>
+<body>
+
+<h2>Student Registration Form</h2>
+
+<form action="/submit" method="post">
+    
+    <label for="fullname">Full Name:</label>
+    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" placeholder="Enter your Age" min="10" max="100" required>
+
+    <label for="dob">DOB:</label>
+    <input type="date" id="dob" name="dob" required>
+
+    <p><b>Gender:</b></p>
+    <input type="radio" id="male" name="gender" value="Male" required>
+    <label for="male">Male</label>
+    
+    <input type="radio" id="female" name="gender" value="Female" required>
+    <label for="female">Female</label>
+
+    <p><b>Hobbies:</b></p>
+    <input type="checkbox" id="reading" name="hobbies" value="Reading">
+    <label for="reading">Reading</label>
+
+    <input type="checkbox" id="sports" name="hobbies" value="Sports">
+    <label for="sports">Sports</label>
+
+    <input type="checkbox" id="music" name="hobbies" value="Music">
+    <label for="music">Music</label>
+
+    <label for="course">Select Course:</label>
+    <select id="course" name="course" required>
+        <option value="">--Select--</option>
+        <option value="MCA">MCA</option>
+        <option value="MBA">MBA</option>
+        <option value="BTech">BTech</option>
+        <option value="MTech">MTech</option>
+        <option value="BPharm">BPharm</option>
+    </select>
+
+    <label for="address">Address:</label>
+    <textarea id="address" name="address" rows="4" placeholder="Enter your address"></textarea>
+
+    <label for="photo">Upload Photo:</label>
+    <input type="file" id="photo" name="photo" accept="image/*">
+
+    <label for="phone">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" placeholder="10-digit number" pattern="[0-9]{10}" required>
+
+    <label for="website">Personal Website (optional):</label>
+    <input type="url" id="website" name="website" placeholder="https://vtechstorms.com/">
+
+    <input type="submit" value="Register">
+    <input type="reset" value="Reset Form">
+
+</form>
+
+</body>
+</html>
